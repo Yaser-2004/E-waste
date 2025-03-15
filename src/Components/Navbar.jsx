@@ -17,7 +17,7 @@ const Navbar = () => {
               { name: "How It Works", link: "#how-it-works" },
               { name: "Rewards", link: "#rewards" },
               { name: "Eco Impact", link: "#eco-impact" },
-              { name: "FAQ", link: "#faq" },
+              { name: "About Us", link: "/about" },
               { name: "Contact", link: "#contact" },
             ].map((item, index) => (
               <li key={index}>
@@ -47,7 +47,7 @@ const Navbar = () => {
                 { name: "How It Works", link: "#how-it-works" },
                 { name: "Rewards", link: "#rewards" },
                 { name: "Eco Impact", link: "#eco-impact" },
-                { name: "FAQ", link: "#faq" },
+                { name: "About Us", link: "/about" },
                 { name: "Contact", link: "#contact" },
               ].map((item, index) => (
                 <li key={index}>
