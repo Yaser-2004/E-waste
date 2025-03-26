@@ -83,7 +83,6 @@ const CollectionRequests = () => {
 
   return (
     <main className="flex-1 p-5">
-        {requests.length === 0 ? <p>No collection requests available.</p> : <DataTable columns={columns} data={requests} />}
       {/* Page header */}
       <PageHeader 
         title="Collection Requests" 
@@ -102,10 +101,14 @@ const CollectionRequests = () => {
           <h2 className="text-xl font-semibold">Collection Requests</h2>
         </div>
         
-        <DataTable 
-          columns={columns}
-          data={requests}
-        />
+        {requests.length === 0 ? (
+          <p>No collection requests available.</p>
+        ) : (
+          <DataTable 
+            columns={columns}
+            data={requests}
+          />
+        )}
         
         <Pagination 
           currentPage={activePage}

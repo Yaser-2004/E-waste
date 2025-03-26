@@ -1,93 +1,12 @@
-// import React from 'react';
-// import { NavLink, useLocation } from 'react-router-dom';
-// import NavItem from './NavItem';
-
-// const SideBar = () => {
-//   const navItems = [
-//     { to: "/dashboard", icon: "📊", label: "Dashboard" },
-//     { to: "/collection-requests", icon: "📦", label: "Collection Requests" },
-//     { to: "/tracking", icon: "🔍", label: "E-Waste Tracking" }
-//   ];
-
-//   return (
-//     <nav className="bg-green-50 md:w-60 py-5">
-//       {navItems.map((item) => (
-//         <NavItem 
-//           key={item.to}
-//           to={item.to} 
-//           icon={item.icon} 
-//           label={item.label} 
-//         />
-//       ))}
-//     </nav>
-//   );
-// };
-
-
-// const SideBar = () => {
-//     const navItems = [
-//       { to: "/dashboard", icon: "📊", label: "Dashboard" },
-//       { to: "/collection-requests", icon: "📦", label: "Collection Requests" },
-//       { to: "/tracking", icon: "🔍", label: "E-Waste Tracking" }
-//     ];
-  
-//     return (
-//       <nav className="bg-green-50 md:w-60 py-5">
-//         {navItems.map((item) => (
-//           <NavLink 
-//             key={item.to}
-//             to={item.to}
-//             className={({ isActive }) => 
-//               `flex items-center px-4 py-3 mb-2 transition-colors rounded-lg ${
-//                 isActive 
-//                   ? 'bg-green-600 text-white' 
-//                   : 'hover:bg-green-100'
-//               }`
-//             }
-//           >
-//             <span className="mr-3">{item.icon}</span>
-//             <span className="font-medium">{item.label}</span>
-//           </NavLink>
-//         ))}
-//       </nav>
-//     );
-// };
-
-
-// import React from "react";
-// import { NavLink } from "react-router-dom";
-
-// function SideBar() {
-//   return (
-//     <nav className="sidebar">
-//       <ul>
-//         <li>
-//           <NavLink to="/company/home/dashboard" activeClassName="active">
-//             Dashboard
-//           </NavLink>
-//         </li>
-//         <li>
-//           <NavLink to="/company/home/collection-requests" activeClassName="active">
-//             Collection Requests
-//           </NavLink>
-//         </li>
-//         <li>
-//           <NavLink to="/company/home/ewaste-tracking" activeClassName="active">
-//             E-Waste Tracking
-//           </NavLink>
-//         </li>
-//       </ul>
-//     </nav>
-//   );
-// }
-
-// export default SideBar;
 import React from "react";
 import { NavLink } from "react-router-dom";
 
 function SideBar() {
   return (
-    <nav className="bg-green-50 w-60 py-5">
+    <nav className="bg-green-50 w-60 py-5 h-full">
+      <div className="px-4 mb-6">
+        <h2 className="text-lg font-bold text-green-800">Company Dashboard</h2>
+      </div>
       <ul>
         <li>
           <NavLink 
@@ -98,7 +17,8 @@ function SideBar() {
               }`
             }
           >
-            Dashboard
+            <span className="mr-3">📊</span>
+            <span className="font-medium">Dashboard</span>
           </NavLink>
         </li>
         <li>
@@ -110,7 +30,8 @@ function SideBar() {
               }`
             }
           >
-            Collection Requests
+            <span className="mr-3">📦</span>
+            <span className="font-medium">Collection Requests</span>
           </NavLink>
         </li>
         <li>
@@ -122,7 +43,8 @@ function SideBar() {
               }`
             }
           >
-            E-Waste Tracking
+            <span className="mr-3">🔍</span>
+            <span className="font-medium">E-Waste Tracking</span>
           </NavLink>
         </li>
         <li>
@@ -134,7 +56,8 @@ function SideBar() {
               }`
             }
           >
-            Processing List
+            <span className="mr-3">⚙️</span>
+            <span className="font-medium">Processing List</span>
           </NavLink>
         </li>
         <li>
@@ -146,7 +69,8 @@ function SideBar() {
               }`
             }
           >
-            Data Analysis
+            <span className="mr-3">📈</span>
+            <span className="font-medium">Data Analysis</span>
           </NavLink>
         </li>
       </ul>
