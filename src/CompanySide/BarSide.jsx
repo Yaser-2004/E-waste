@@ -36,7 +36,7 @@ function SideBar() {
         </li>
         <li>
           <NavLink 
-            to="ewaste-tracking" 
+            to="e-waste-tracking" 
             className={({ isActive }) => 
               `flex items-center px-4 py-3 mb-2 transition-colors rounded-lg ${
                 isActive ? 'bg-green-600 text-white' : 'hover:bg-green-100'
