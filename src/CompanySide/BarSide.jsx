@@ -47,32 +47,6 @@ function SideBar() {
             <span className="font-medium">E-Waste Tracking</span>
           </NavLink>
         </li>
-        <li>
-          <NavLink 
-            to="processing-list" 
-            className={({ isActive }) => 
-              `flex items-center px-4 py-3 mb-2 transition-colors rounded-lg ${
-                isActive ? 'bg-green-600 text-white' : 'hover:bg-green-100'
-              }`
-            }
-          >
-            <span className="mr-3">⚙️</span>
-            <span className="font-medium">Processing List</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink 
-            to="data-analysis" 
-            className={({ isActive }) => 
-              `flex items-center px-4 py-3 mb-2 transition-colors rounded-lg ${
-                isActive ? 'bg-green-600 text-white' : 'hover:bg-green-100'
-              }`
-            }
-          >
-            <span className="mr-3">📈</span>
-            <span className="font-medium">Data Analysis</span>
-          </NavLink>
-        </li>
       </ul>
     </nav>
   );

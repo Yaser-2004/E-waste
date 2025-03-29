@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Routes, Route } from 'react-router-dom';
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 // Import Components
@@ -63,25 +64,11 @@ const CompanyHomePage = () => {
             to="/company/home/e-waste-tracking"
           />
           <NavItem 
-            icon="process" 
-            label="Processing List" 
-            active={isPathActive("processing-list")} 
-            onClick={handleNavigation}
-            to="/company/home/processing-list"
-          />
-          <NavItem 
             icon="collection" 
             label="Collection Requests" 
             active={isPathActive("collection-requests")} 
             onClick={handleNavigation}
             to="/company/home/collection-requests"
-          />
-          <NavItem 
-            icon="data" 
-            label="Data Analysis" 
-            active={isPathActive("data-analysis")} 
-            onClick={handleNavigation}
-            to="/company/home/data-analysis"
           />
         </SideBar>
 

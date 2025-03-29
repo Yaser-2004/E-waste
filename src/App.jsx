@@ -51,10 +51,10 @@ import LoginPage from './Pages/LoginPage';
 import UserHomePage from './Pages/Home';
 import CompanyHomePage from './Pages/CompanyHomePage';
 import Dashboard from './CompanySide/Dashboard';
-import EWasteTrackingWrapper from './CompanySide/EWasteTracking';
-import ProcessingList from './CompanySide/ProcessingList';
+import EWasteTracking from './CompanySide/EWasteTracking';
+
 import CollectionRequests from './CompanySide/CollectionRequest';
-import DataTable from './CompanySide/DataTable';
+
 
 function App() {
   return (
@@ -68,10 +68,11 @@ function App() {
         <Route path="/company/home" element={<CompanyHomePage />}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="e-waste-tracking" element={<EWasteTrackingWrapper />} />
-          <Route path="processing-list" element={<ProcessingList />} />
+          <Route path="e-waste-tracking" element={<EWasteTracking />} 
+          render={() => {
+            console.log('E-Waste Tracking Route Matched');
+            return <EWasteTracking />;}} />
           <Route path="collection-requests" element={<CollectionRequests />} />
-          <Route path="data-analysis" element={<DataTable />} />
         </Route>
       </Routes>
     </Router>

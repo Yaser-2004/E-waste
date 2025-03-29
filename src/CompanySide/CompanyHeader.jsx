@@ -8,7 +8,7 @@ const CompanyHeader = ({ username = "Ram" }) => {
   
   return (
     <header className="bg-green-800 text-white px-5 py-4 flex justify-between items-center">
-      <div className="text-xl font-bold">E-Waste Management Platform</div>
+      <div className="text-3xl font-bold ">EcoCycle</div>
       <div className="flex items-center gap-5">
         <NotificationBell />
         <HelpButton />
