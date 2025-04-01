@@ -1,364 +1,222 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter } from 'react-icons/fa';
 
 const CompanyStorePage = () => {
+  // State for products and active tab
   const [products, setProducts] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterBy, setFilterBy] = useState('all');
-  
-  // Sample product data - in a real app this would come from an API
-  useEffect(() => {
-    // Mock data for demonstration
-    const mockProducts = [
-      {
-        id: 1,
-        name: "Eco-Friendly Water Bottle",
-        description: "Reusable stainless steel water bottle",
-        regularPrice: 24.99,
-        ecoPointsDiscount: 10,
-        ecoPointsRequired: 500,
-        image: "/api/placeholder/150/150",
-        category: "Household",
-        stock: 45
-      },
-      {
-        id: 2,
-        name: "Recycled Paper Notebook",
-        description: "100% recycled paper notebook with bamboo cover",
-        regularPrice: 12.99,
-        ecoPointsDiscount: 15,
-        ecoPointsRequired: 300,
-        image: "/api/placeholder/150/150",
-        category: "Office",
-        stock: 120
-      },
-      {
-        id: 3,
-        name: "Solar Power Bank",
-        description: "Portable solar-powered charging device",
-        regularPrice: 49.99,
-        ecoPointsDiscount: 20,
-        ecoPointsRequired: 800,
-        image: "/api/placeholder/150/150",
-        category: "Electronics",
-        stock: 30
-      }
-    ];
-    
-    setProducts(mockProducts);
-  }, []);
-  
-  // Filter products based on search term and filter option
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (filterBy === 'all') return matchesSearch;
-    if (filterBy === 'highDiscount') return matchesSearch && product.ecoPointsDiscount >= 15;
-    if (filterBy === 'lowPoints') return matchesSearch && product.ecoPointsRequired < 500;
-    
-    return matchesSearch;
-  });
-  
-  // Functions for product management
-  const handleAddProduct = (newProduct) => {
-    const productWithId = {
-      ...newProduct,
-      id: products.length + 1, // Simple ID generation
-    };
-    setProducts([...products, productWithId]);
-    setShowAddModal(false);
-  };
-  
-  const handleEditProduct = (updatedProduct) => {
-    setProducts(products.map(p => 
-      p.id === updatedProduct.id ? updatedProduct : p
-    ));
-    setShowEditModal(false);
-    setCurrentProduct(null);
-  };
-  
-  const handleDeleteProduct = (productId) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts(products.filter(p => p.id !== productId));
-    }
-  };
-  
-  const openEditModal = (product) => {
-    setCurrentProduct(product);
-    setShowEditModal(true);
-  };
-  
-  return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Store Management</h1>
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md flex items-center"
-        >
-          <FaPlus className="mr-2" /> Add New Product
-        </button>
-      </div>
-      
-      {/* Search and Filter */}
-      <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
-        <div className="relative flex-grow">
-          <FaSearch className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="pl-10 p-2 border border-gray-300 rounded-md w-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center space-x-2">
-          <FaFilter className="text-gray-500" />
-          <select 
-            className="p-2 border border-gray-300 rounded-md"
-            value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
-          >
-            <option value="all">All Products</option>
-            <option value="highDiscount">High Discount (15%+)</option>
-            <option value="lowPoints">Low Points {'(<500)'}</option>
-          </select>
-        </div>
-      </div>
-      
-      {/* Products Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="py-3 px-4 text-left">Image</th>
-              <th className="py-3 px-4 text-left">Product</th>
-              <th className="py-3 px-4 text-left">Regular Price</th>
-              <th className="py-3 px-4 text-left">EcoPoints Discount</th>
-              <th className="py-3 px-4 text-left">EcoPoints Required</th>
-              <th className="py-3 px-4 text-left">Stock</th>
-              <th className="py-3 px-4 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map(product => (
-                <tr key={product.id} className="border-t border-gray-200 hover:bg-gray-50">
-                  <td className="py-3 px-4">
-                    <img 
-                      src={product.image} 
-                      alt={product.name} 
-                      className="w-12 h-12 object-cover rounded-md"
-                    />
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="font-medium">{product.name}</div>
-                    <div className="text-sm text-gray-500">{product.category}</div>
-                  </td>
-                  <td className="py-3 px-4">${product.regularPrice.toFixed(2)}</td>
-                  <td className="py-3 px-4">{product.ecoPointsDiscount}%</td>
-                  <td className="py-3 px-4">{product.ecoPointsRequired} points</td>
-                  <td className="py-3 px-4">{product.stock} units</td>
-                  <td className="py-3 px-4">
-                    <div className="flex space-x-2">
-                      <button 
-                        onClick={() => openEditModal(product)}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="py-4 px-4 text-center text-gray-500">
-                  No products found. Add a new product or adjust your search.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      
-      {/* Add Product Modal */}
-      {showAddModal && (
-        <ProductModal 
-          onClose={() => setShowAddModal(false)}
-          onSave={handleAddProduct}
-          title="Add New Product"
-        />
-      )}
-      
-      {/* Edit Product Modal */}
-      {showEditModal && (
-        <ProductModal 
-          onClose={() => setShowEditModal(false)}
-          onSave={handleEditProduct}
-          title="Edit Product"
-          product={currentProduct}
-        />
-      )}
-    </div>
-  );
-};
+  const [orders, setOrders] = useState([]);
+  const [activeTab, setActiveTab] = useState('products');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-// Product Modal Component for Add/Edit
-const ProductModal = ({ onClose, onSave, title, product }) => {
-  const [formData, setFormData] = useState(
-    product || {
-      name: "",
-      description: "",
-      regularPrice: 0,
-      ecoPointsDiscount: 0,
-      ecoPointsRequired: 0,
-      category: "",
-      stock: 0,
-      image: "/api/placeholder/150/150" // Default placeholder image
-    }
-  );
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === "regularPrice" || name === "ecoPointsDiscount" || name === "ecoPointsRequired" || name === "stock" 
-        ? Number(value) 
-        : value
-    });
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-  
+  // Fetch mock data
+  useEffect(() => {
+    // Mock products data
+    const mockProducts = [
+      { id: 1, name: 'Eco-friendly Water Bottle', points: 150, category: 'kitchen', description: 'Sustainable water bottle made from recycled materials', stock: 15, image: '/images/water-bottle.jpg', status: 'active' },
+      { id: 2, name: 'Reusable Grocery Bag', points: 100, category: 'shopping', description: 'Durable shopping bag that reduces plastic waste', stock: 25, image: '/images/grocery-bag.jpg', status: 'active' },
+      { id: 3, name: 'Bamboo Toothbrush', points: 80, category: 'bathroom', description: 'Biodegradable toothbrush with soft bristles', stock: 30, image: '/images/toothbrush.jpg', status: 'active' },
+      { id: 4, name: 'Solar Power Bank', points: 300, category: 'electronics', description: 'Charge your devices using solar energy', stock: 0, image: '/images/power-bank.jpg', status: 'out_of_stock' },
+    ];
+    setProducts(mockProducts);
+
+    // Mock orders data
+    const mockOrders = [
+      { id: 101, userName: 'Alex Johnson', date: '2025-03-28', status: 'completed', totalPoints: 330 },
+      { id: 102, userName: 'Sam Taylor', date: '2025-03-25', status: 'completed', totalPoints: 410 },
+      { id: 103, userName: 'Morgan Lee', date: '2025-03-20', status: 'processing', totalPoints: 300 },
+    ];
+    setOrders(mockOrders);
+  }, []);
+
+  // Get unique categories
+  const categories = ['all', ...new Set(products.map(item => item.category))];
+
+  // Filter products based on search and category
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Stats calculations
+  const totalSales = orders.filter(order => order.status === 'completed').length;
+  const totalPointsRedeemed = orders.reduce((sum, order) => sum + order.totalPoints, 0);
+  const pendingOrders = orders.filter(order => order.status === 'processing').length;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Product Name</label>
+    <div className="container mx-auto p-4 bg-white rounded-lg shadow">
+      <h1 className="text-2xl font-bold mb-6">Company Store</h1>
+      
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-blue-50 p-4 rounded-lg shadow">
+          <h3 className="text-lg font-medium text-blue-800">Total Sales</h3>
+          <p className="text-2xl font-bold text-blue-600">{totalSales}</p>
+        </div>
+        <div className="bg-green-50 p-4 rounded-lg shadow">
+          <h3 className="text-lg font-medium text-green-800">Points Redeemed</h3>
+          <p className="text-2xl font-bold text-green-600">{totalPointsRedeemed}</p>
+        </div>
+        <div className="bg-amber-50 p-4 rounded-lg shadow">
+          <h3 className="text-lg font-medium text-amber-800">Pending Orders</h3>
+          <p className="text-2xl font-bold text-amber-600">{pendingOrders}</p>
+        </div>
+      </div>
+      
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="flex -mb-px">
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`mr-6 py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'products'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Products
+          </button>
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`mr-6 py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'orders'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Orders
+          </button>
+        </nav>
+      </div>
+      
+      {/* Products Tab */}
+      {activeTab === 'products' && (
+        <div>
+          <div className="mb-6 flex flex-col md:flex-row justify-between gap-4">
+            {/* Search */}
+            <div className="relative max-w-md">
               <input
                 type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
+                placeholder="Search products..."
+                className="w-full p-2 pl-8 border border-gray-300 rounded"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
+              <svg 
+                className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-1">Category</label>
-              <input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
-              />
-            </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-1">Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                rows="3"
-                required
-              ></textarea>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">Regular Price ($)</label>
-              <input
-                type="number"
-                name="regularPrice"
-                value={formData.regularPrice}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                min="0"
-                step="0.01"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">Stock</label>
-              <input
-                type="number"
-                name="stock"
-                value={formData.stock}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                min="0"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">EcoPoints Discount (%)</label>
-              <input
-                type="number"
-                name="ecoPointsDiscount"
-                value={formData.ecoPointsDiscount}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                min="0"
-                max="100"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">EcoPoints Required</label>
-              <input
-                type="number"
-                name="ecoPointsRequired"
-                value={formData.ecoPointsRequired}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                min="0"
-                required
-              />
+            {/* Category Filters */}
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-3 py-1.5 rounded text-sm capitalize whitespace-nowrap ${
+                    selectedCategory === category
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
           </div>
           
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            >
-              Save Product
-            </button>
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map(product => (
+              <div key={product.id} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div className="h-48 bg-gray-200 relative">
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-gray-500">No image</div>
+                  )}
+                  <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded ${
+                    product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {product.status === 'active' ? 'In Stock' : 'Out of Stock'}
+                  </span>
+                </div>
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-medium text-gray-900">{product.name}</h3>
+                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      {product.points} pts
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500 capitalize">
+                      Category: {product.category}
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      Stock: {product.stock}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </form>
-      </div>
+          
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-10">
+              <h3 className="text-lg text-gray-600">No products found</h3>
+              <p className="mt-2 text-gray-500">Try a different search term or category</p>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Orders Tab */}
+      {activeTab === 'orders' && (
+        <div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {orders.map(order => (
+                  <tr key={order.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{order.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.userName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.totalPoints}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+                        order.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {order.status === 'completed' ? 'Completed' : 'Processing'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+            {orders.length === 0 && (
+              <div className="text-center py-10">
+                <h3 className="text-lg text-gray-600">No orders found</h3>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
