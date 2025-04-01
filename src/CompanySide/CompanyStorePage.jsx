@@ -7,6 +7,17 @@ const CompanyStorePage = () => {
   const [activeTab, setActiveTab] = useState('products');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  
+  // New state for add product form
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    points: 0,
+    category: '',
+    description: '',
+    stock: 0,
+    status: 'active'
+  });
 
   // Fetch mock data
   useEffect(() => {
@@ -30,6 +41,9 @@ const CompanyStorePage = () => {
 
   // Get unique categories
   const categories = ['all', ...new Set(products.map(item => item.category))];
+  
+  // Available categories for new products
+  const availableCategories = [...new Set(products.map(item => item.category))];
 
   // Filter products based on search and category
   const filteredProducts = products.filter(product => {
@@ -42,6 +56,43 @@ const CompanyStorePage = () => {
   const totalSales = orders.filter(order => order.status === 'completed').length;
   const totalPointsRedeemed = orders.reduce((sum, order) => sum + order.totalPoints, 0);
   const pendingOrders = orders.filter(order => order.status === 'processing').length;
+  
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct({
+      ...newProduct,
+      [name]: name === 'points' || name === 'stock' ? parseInt(value, 10) || 0 : value
+    });
+  };
+  
+  // Handle form submission
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    
+    // Create new product with ID
+    const newProductWithId = {
+      ...newProduct,
+      id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1,
+      image: null // Could implement image upload in a real application
+    };
+    
+    // Add to products list
+    setProducts([...products, newProductWithId]);
+    
+    // Reset form
+    setNewProduct({
+      name: '',
+      points: 0,
+      category: '',
+      description: '',
+      stock: 0,
+      status: 'active'
+    });
+    
+    // Close form
+    setShowAddForm(false);
+  };
 
   return (
     <div className="container mx-auto p-4 bg-white rounded-lg shadow">
@@ -129,6 +180,167 @@ const CompanyStorePage = () => {
               ))}
             </div>
           </div>
+          
+          {/* Add Product Button */}
+          <div className="mb-6">
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Add New Product
+            </button>
+          </div>
+          
+          {/* Add Product Form */}
+          {showAddForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Add New Product</h2>
+                  <button 
+                    onClick={() => setShowAddForm(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <form onSubmit={handleAddProduct}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={newProduct.name}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border border-gray-300 rounded"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Points</label>
+                      <input
+                        type="number"
+                        name="points"
+                        value={newProduct.points}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border border-gray-300 rounded"
+                        min="1"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                      <div className="relative">
+                        <select
+                          name="category"
+                          value={newProduct.category}
+                          onChange={handleInputChange}
+                          className="w-full p-2 border border-gray-300 rounded appearance-none"
+                          required
+                        >
+                          <option value="">Select Category</option>
+                          {availableCategories.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                          <option value="new">New Category</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {newProduct.category === 'new' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">New Category Name</label>
+                        <input
+                          type="text"
+                          name="category"
+                          value=""
+                          onChange={handleInputChange}
+                          className="w-full p-2 border border-gray-300 rounded"
+                          placeholder="Enter new category"
+                          required
+                        />
+                      </div>
+                    )}
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={newProduct.stock}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border border-gray-300 rounded"
+                        min="0"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <div className="relative">
+                        <select
+                          name="status"
+                          value={newProduct.status}
+                          onChange={handleInputChange}
+                          className="w-full p-2 border border-gray-300 rounded appearance-none"
+                        >
+                          <option value="active">Active</option>
+                          <option value="out_of_stock">Out of Stock</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      name="description"
+                      value={newProduct.description}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      rows="3"
+                      required
+                    ></textarea>
+                  </div>
+                  
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddForm(false)}
+                      className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                      Add Product
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
           
           {/* Products Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
