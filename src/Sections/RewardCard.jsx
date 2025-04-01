@@ -1,6 +1,6 @@
 const RewardCard = ({ tier, points, benefits, highlight, bgColor, borderColor }) => {
     return (
-      <div className={`bg-neutral-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ${highlight ? `border-2 ${borderColor} transform md:-translate-y-4` : ''}`}>
+      <div className={`bg-neutral-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ${highlight ? `border-2 ${borderColor} transform md:-translate-y-4` : ''} text-black`}>
         <div className={`${bgColor} py-4 text-center ${highlight ? 'text-white' : ''}`}>
           {highlight && <div className="inline-block bg-white text-green-500 text-xs font-bold py-1 px-3 rounded-full mb-2">MOST POPULAR</div>}
           <h3 className="text-xl font-bold">{tier}</h3>
@@ -79,7 +79,7 @@ const RewardCard = ({ tier, points, benefits, highlight, bgColor, borderColor })
       <section id="rewards" className="py-16 bg-white">
         <div className="container mx-auto px-4 max-w-[1400px]">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">
               Turn E-Waste into <span className="text-green-500">Eco-Points</span>
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">

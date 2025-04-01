@@ -1,6 +1,6 @@
 const WhyRecycle = () => {
     return (
-      <section id="benefits" className="py-16 bg-white">
+      <section id="benefits" className="py-16 bg-white text-black">
         <div className="container mx-auto px-4 max-w-[1400px]" id="el-kxs0kn3i">
           <div className="text-center mb-12" id="el-9pxdnbea">
             <h2 className="text-3xl md:text-4xl font-bold mb-4" id="el-mq6kg50z">
