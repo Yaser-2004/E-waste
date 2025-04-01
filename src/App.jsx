@@ -6,8 +6,9 @@ import UserHomePage from './Pages/Home';
 import CompanyHomePage from './Pages/CompanyHomePage';
 import Dashboard from './CompanySide/Dashboard';
 import EWasteTracking from './CompanySide/EWasteTracking';
-import Store from './Sections/Store';
+import Store from './Pages/Store';
 import About from './Pages/About';
+// import CompanyStorePage from './CompanySide/CompanyStorePage';
 
 import CollectionRequests from './CompanySide/CollectionRequest';
 
@@ -31,6 +32,7 @@ function App() {
             console.log('E-Waste Tracking Route Matched');
             return <EWasteTracking />;}} />
           <Route path="collection-requests" element={<CollectionRequests />} />
+          {/* <Route path="store" element={<CompanyStorePage />} />  */}
         </Route>
       </Routes>
     </Router>
