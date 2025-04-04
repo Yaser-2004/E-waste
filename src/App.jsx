@@ -55,6 +55,7 @@ import EWasteTrackingWrapper from './CompanySide/EWasteTracking';
 import ProcessingList from './CompanySide/ProcessingList';
 import CollectionRequests from './CompanySide/CollectionRequest';
 import DataTable from './CompanySide/DataTable';
+import Profile from './Pages/profile';
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/user/home" element={<UserHomePage />} />
+        <Route path="/user/profile" element={<Profile />} />
         
         {/* Company routes */}
         <Route path="/company/home" element={<CompanyHomePage />}>
