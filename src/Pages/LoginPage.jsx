@@ -334,15 +334,15 @@ const LoginPage = () => {
   });
   
   const [companyFormData, setCompanyFormData] = useState({
-    companyId: '',
+    email: '',
     password: '',
     rememberMe: false
   });
 
   const [companyRegisterData, setCompanyRegisterData] = useState({
     companyName: '',
-    companyId: '',
     email: '',
+    location: '',
     password: '',
     confirmPassword: ''
   });
@@ -415,8 +415,8 @@ const LoginPage = () => {
   const validateCompanyForm = () => {
     const newErrors = {};
     
-    if (!companyFormData.companyId) {
-      newErrors.companyId = 'Company ID is required';
+    if (!companyFormData.email) {
+      newErrors.companyId = 'Company email is required';
     }
     
     if (!companyFormData.password) {
@@ -472,14 +472,14 @@ const LoginPage = () => {
       newErrors.companyName = 'Company name is required';
     }
     
-    if (!companyRegisterData.companyId) {
-      newErrors.companyId = 'Company ID is required';
-    }
-    
     if (!companyRegisterData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(companyRegisterData.email)) {
       newErrors.email = 'Email address is invalid';
+    }
+
+    if (!companyRegisterData.location) {
+      newErrors.location = 'Company Location is required';
     }
     
     if (!companyRegisterData.password) {
@@ -504,7 +504,7 @@ const LoginPage = () => {
     if (validateUserForm()) {
       console.log('User form validated successfully');
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/login', userFormData, {
+        const response = await axios.post('http://localhost:5000/api/auth/user/login', userFormData, {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -526,12 +526,32 @@ const LoginPage = () => {
     }
   };
 
-  const handleCompanySubmit = (e) => {
+  const handleCompanySubmit = async (e) => {
     e.preventDefault();
     console.log('Submitting company form:', companyFormData);
     
     if (validateCompanyForm()) {
       console.log('Company form validated successfully');
+
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/company/login', companyFormData, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
+        console.log('Company logged in successfully');
+
+        const { token, company } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('company', JSON.stringify(company));
+
+        navigate('/company/home');
+      } catch (error) {
+        console.error("Login failed:", error.response?.data || error.message);
+        alert("Login failed, please check your credentials.");
+      }
+
       navigate('/company/home');
     } else {
       console.log('Company form validation failed:', errors);
@@ -545,7 +565,7 @@ const LoginPage = () => {
     if (validateUserRegister()) {
       console.log('User registration validated successfully');
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/register', userRegisterData, {
+        const response = await axios.post('http://localhost:5000/api/auth/user/register', userRegisterData, {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -574,17 +594,29 @@ const LoginPage = () => {
     }
   };
 
-  const handleCompanyRegisterSubmit = (e) => {
+  const handleCompanyRegisterSubmit = async (e) => {
     e.preventDefault();
     console.log('Submitting company registration:', companyRegisterData);
     
     if (validateCompanyRegister()) {
       console.log('Company registration validated successfully');
       // In a real application, you would send this data to your backend
-      // For now, we'll simulate success and switch to login view
+      const response = await axios.post('http://localhost:5000/api/auth/company/register', companyRegisterData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+
+      console.log("Registration successfull", response.data);
+
+      const { token, newCompany } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('company', JSON.stringify(newCompany));
+      
       setIsNewCompany(false);
       // Pre-fill the login company ID field with the registered company ID
-      setCompanyFormData(prev => ({...prev, companyId: companyRegisterData.companyId}));
+      navigate('/company/home');
     } else {
       console.log('Company registration validation failed:', errors);
     }
@@ -874,23 +906,23 @@ const LoginPage = () => {
             <h2 className="mb-8 text-center text-2xl text-gray-800 font-semibold">Company Login</h2>
             
             <div className="mb-6">
-              <label htmlFor="companyId" className="block mb-2 text-gray-600">
-                Company ID
+              <label htmlFor="email" className="block mb-2 text-gray-600">
+                Company Email
               </label>
               <input
                 type="text"
-                id="companyId"
-                name="companyId"
-                value={companyFormData.companyId}
+                id="email"
+                name="email"
+                value={companyFormData.email}
                 onChange={handleCompanyInputChange}
                 className={`w-full p-3 border rounded-md text-base text-black ${
-                  errors.companyId ? 'border-red-500' : 'border-gray-300'
+                  errors.email ? 'border-red-500' : 'border-gray-300'
                 }`}
                 autoComplete="username"
               />
-              {errors.companyId && (
+              {errors.email && (
                 <span className="text-red-500 text-sm mt-1 block">
-                  {errors.companyId}
+                  {errors.email}
                 </span>
               )}
             </div>
@@ -978,27 +1010,6 @@ const LoginPage = () => {
             </div>
             
             <div className="mb-6">
-              <label htmlFor="registerCompanyId" className="block mb-2 text-gray-600">
-                Company ID
-              </label>
-              <input
-                type="text"
-                id="registerCompanyId"
-                name="companyId"
-                value={companyRegisterData.companyId}
-                onChange={handleCompanyRegisterChange}
-                className={`w-full p-3 border rounded-md text-base text-black ${
-                  errors.companyId ? 'border-red-500' : 'border-gray-300'
-                }`}
-              />
-              {errors.companyId && (
-                <span className="text-red-500 text-sm mt-1 block">
-                  {errors.companyId}
-                </span>
-              )}
-            </div>
-            
-            <div className="mb-6">
               <label htmlFor="companyEmail" className="block mb-2 text-gray-600">
                 Email Address
               </label>
@@ -1015,6 +1026,27 @@ const LoginPage = () => {
               {errors.email && (
                 <span className="text-red-500 text-sm mt-1 block">
                   {errors.email}
+                </span>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="location" className="block mb-2 text-gray-600">
+                Location
+              </label>
+              <input
+                type="text"
+                id="location"
+                name="location"
+                value={companyRegisterData.location}
+                onChange={handleCompanyRegisterChange}
+                className={`w-full p-3 border rounded-md text-base text-black ${
+                  errors.location ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.location && (
+                <span className="text-red-500 text-sm mt-1 block">
+                  {errors.location}
                 </span>
               )}
             </div>
