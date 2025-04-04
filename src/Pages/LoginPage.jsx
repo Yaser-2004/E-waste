@@ -311,6 +311,7 @@
 // LoginPage.jsx with registration options for new users
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginPage = () => {
   const [activeTab, setActiveTab] = useState('user');
@@ -324,8 +325,10 @@ const LoginPage = () => {
   });
 
   const [userRegisterData, setUserRegisterData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
+    location: '',
     password: '',
     confirmPassword: ''
   });
@@ -430,14 +433,22 @@ const LoginPage = () => {
   const validateUserRegister = () => {
     const newErrors = {};
     
-    if (!userRegisterData.fullName) {
-      newErrors.fullName = 'Full name is required';
+    if (!userRegisterData.firstName) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!userRegisterData.lastName) {
+      newErrors.lastName = 'Last name is required';
     }
     
     if (!userRegisterData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(userRegisterData.email)) {
       newErrors.email = 'Email address is invalid';
+    }
+
+    if (!userRegisterData.location) {
+      newErrors.location = 'Location is required';
     }
     
     if (!userRegisterData.password) {
@@ -486,13 +497,30 @@ const LoginPage = () => {
   };
 
   // Form submissions
-  const handleUserSubmit = (e) => {
+  const handleUserSubmit = async (e) => {
     e.preventDefault();
     console.log('Submitting user form:', userFormData);
     
     if (validateUserForm()) {
       console.log('User form validated successfully');
-      navigate('/user/home');
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/login', userFormData, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
+        console.log('User logged in successfully');
+
+        const { token, user } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        navigate('/user/home');
+      } catch (error) {
+        console.error("Login failed:", error.response?.data || error.message);
+        alert("Login failed, please check your credentials.");
+      }
     } else {
       console.log('User form validation failed:', errors);
     }
@@ -510,17 +538,37 @@ const LoginPage = () => {
     }
   };
 
-  const handleUserRegisterSubmit = (e) => {
+  const handleUserRegisterSubmit = async (e) => {
     e.preventDefault();
     console.log('Submitting user registration:', userRegisterData);
     
     if (validateUserRegister()) {
       console.log('User registration validated successfully');
-      // In a real application, you would send this data to your backend
-      // For now, we'll simulate success and switch to login view
-      setIsNewUser(false);
-      // Pre-fill the login email field with the registered email
-      setUserFormData(prev => ({...prev, email: userRegisterData.email}));
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/register', userRegisterData, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
+
+        console.log("Registration successfull", response.data);
+
+        const { token, newUser } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(newUser));
+
+        setIsNewUser(false);
+        // setUserFormData(prev => ({...prev, email: userRegisterData.email}));
+        navigate('/user/home');
+      } catch (error) {
+        console.error("Registration failed:", error.response?.data || error.message);
+      }
+      // // In a real application, you would send this data to your backend
+      // // For now, we'll simulate success and switch to login view
+      // setIsNewUser(false);
+      // // Pre-fill the login email field with the registered email
+      // setUserFormData(prev => ({...prev, email: userRegisterData.email}));
     } else {
       console.log('User registration validation failed:', errors);
     }
@@ -678,22 +726,43 @@ const LoginPage = () => {
             <h2 className="mb-8 text-center text-2xl text-gray-800 font-semibold">User Registration</h2>
             
             <div className="mb-6">
-              <label htmlFor="fullName" className="block mb-2 text-gray-600">
-                Full Name
+              <label htmlFor="firstName" className="block mb-2 text-gray-600">
+                First Name
               </label>
               <input
                 type="text"
-                id="fullName"
-                name="fullName"
-                value={userRegisterData.fullName}
+                id="firstName"
+                name="firstName"
+                value={userRegisterData.firstName}
                 onChange={handleUserRegisterChange}
                 className={`w-full p-3 border rounded-md text-base text-black ${
-                  errors.fullName ? 'border-red-500' : 'border-gray-300'
+                  errors.firstName ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
-              {errors.fullName && (
+              {errors.firstName && (
                 <span className="text-red-500 text-sm mt-1 block">
-                  {errors.fullName}
+                  {errors.firstName}
+                </span>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="lastName" className="block mb-2 text-gray-600">
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={userRegisterData.lastName}
+                onChange={handleUserRegisterChange}
+                className={`w-full p-3 border rounded-md text-base text-black ${
+                  errors.lastName ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.lastName && (
+                <span className="text-red-500 text-sm mt-1 block">
+                  {errors.lastName}
                 </span>
               )}
             </div>
@@ -715,6 +784,27 @@ const LoginPage = () => {
               {errors.email && (
                 <span className="text-red-500 text-sm mt-1 block">
                   {errors.email}
+                </span>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="location" className="block mb-2 text-gray-600">
+                Location
+              </label>
+              <input
+                type="text"
+                id="location"
+                name="location"
+                value={userRegisterData.location}
+                onChange={handleUserRegisterChange}
+                className={`w-full p-3 border rounded-md text-base text-black ${
+                  errors.location ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.location && (
+                <span className="text-red-500 text-sm mt-1 block">
+                  {errors.location}
                 </span>
               )}
             </div>

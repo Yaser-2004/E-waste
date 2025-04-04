@@ -1,7 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [display, setDisplay] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage?.getItem('user'));
+    
+    if (user) {
+      setFirstName(user.firstName);
+    }
+  }, [])
+
+  const handleLogOut = async () => {
+      try {
+        await axios.post("http://localhost:5000/api/auth/logout", {}, {
+          withCredentials: true, 
+        });
+    
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+    
+        navigate('/login');
+      } catch (error) {
+        console.error("Logout failed: ", error.message);
+        alert("Logout failed, please try again.");
+      }
+  }
 
   return (
     <header className="bg-neutral-800 text-white w-full">
@@ -11,7 +40,7 @@ const Navbar = () => {
           <div className="text-2xl font-bold text-green-500">EcoCycle</div>
           
           {/* Desktop Navigation */}
-          <ul className="hidden md:flex space-x-6">
+          <ul className="hidden md:flex space-x-6 items-center">
             {[
               { name: "Home", link: "#" },
               { name: "How It Works", link: "#how-it-works" },
@@ -19,7 +48,6 @@ const Navbar = () => {
               { name: "Eco Impact", link: "#eco-impact" },
               { name: "About Us", link: "/about" },
               { name: "Store", link: "/store" },
-              { name: "Contact", link: "#contact" },
             ].map((item, index) => (
               <li key={index}>
                 <a href={item.link} className="hover:text-green-400 transition duration-300">
@@ -27,6 +55,15 @@ const Navbar = () => {
                 </a>
               </li>
             ))}
+            <div className="relative h-10 w-10 bg-green-400 rounded-full hover:cursor-pointer" onClick={() => setDisplay(!display)}>
+              <p className="font-bold text-xl text-center py-1">{firstName.charAt(0)}</p>
+
+              <div className={`absolute p-3 text-black top-12 w-40 right-0 bg-white rounded-md ${!display ? 'hidden' : null}`}>
+                <p className="pb-2 mb-2 border-b border-gray-200">{firstName}</p>
+                <a href="/user/profile" className="w-full block pb-2 mb-2 border-b border-gray-200 hover:text-green-400 transition duration-300">My Profile</a>
+                <button className="block bg-green-400 rounded-md p-2 px-4 hover:cursor-pointer" onClick={() => handleLogOut()}>Log Out</button>
+              </div>
+            </div>
           </ul>
           
           {/* Mobile Navigation Button */}
