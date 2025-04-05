@@ -56,7 +56,7 @@ const CompanyHeader = ({ children }) => {
           <div className="relative hover:cursor-pointer w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white" onClick={() => setDisplay(!display)}>
             {companyName.charAt(0)}
 
-            <div className={`absolute p-3 text-black top-12 w-40 right-0 bg-white rounded-md border border-black ${!display ? 'hidden' : null}`}>
+            <div className={`absolute z-10 p-3 text-black top-12 w-40 right-0 bg-white rounded-md border border-black ${!display ? 'hidden' : null}`}>
               <p className="pb-2 mb-2 border-b border-gray-200">{companyName}</p>
               <button className="block bg-green-400 rounded-md p-2 px-4 hover:cursor-pointer" onClick={() => handleLogOut()}>Log Out</button>
             </div>

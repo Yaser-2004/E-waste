@@ -12,7 +12,7 @@ const ProcessingList = ({ data, onSearch, onViewItem }) => {
 
   const columns = [
     { key: 'id', header: 'ID' },
-    { key: 'type', header: 'Type' },
+    { key: 'type', header: 'Item Name' },
     { key: 'location', header: 'Location' },
     { 
       key: 'status', 

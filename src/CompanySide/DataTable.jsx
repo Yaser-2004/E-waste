@@ -30,7 +30,7 @@ const DataTable = ({ columns, data }) => {
               <tr key={rowIndex} className="hover:bg-green-50 transition-colors">
                 {columns.map((column) => (
                   <td key={`${rowIndex}-${column.key}`} className="p-3 border-b">
-                    {column.render ? column.render(row) : row[column.key] || "—"}
+                    {column.render ? column.render(row) : (column.key == 'id') ? '#' + row[column.key].slice(-5) : row[column.key] || "—"}
                   </td>
                 ))}
               </tr>
