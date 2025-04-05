@@ -11,6 +11,8 @@ const StatusBadge = ({ status }) => {
         return 'bg-yellow-50 text-yellow-600';
       case 'Completed':
         return 'bg-green-100 text-green-600';
+      case 'Recycled':
+      return 'bg-green-100 text-green-600';
       case 'Canceled':
         return 'bg-red-100 text-red-600';
       default:

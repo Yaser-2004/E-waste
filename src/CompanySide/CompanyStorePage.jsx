@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const CompanyStorePage = () => {
@@ -22,13 +23,33 @@ const CompanyStorePage = () => {
   // Fetch mock data
   useEffect(() => {
     // Mock products data
-    const mockProducts = [
-      { id: 1, name: 'Eco-friendly Water Bottle', points: 150, category: 'kitchen', description: 'Sustainable water bottle made from recycled materials', stock: 15, image: '/images/water-bottle.jpg', status: 'active' },
-      { id: 2, name: 'Reusable Grocery Bag', points: 100, category: 'shopping', description: 'Durable shopping bag that reduces plastic waste', stock: 25, image: '/images/grocery-bag.jpg', status: 'active' },
-      { id: 3, name: 'Bamboo Toothbrush', points: 80, category: 'bathroom', description: 'Biodegradable toothbrush with soft bristles', stock: 30, image: '/images/toothbrush.jpg', status: 'active' },
-      { id: 4, name: 'Solar Power Bank', points: 300, category: 'electronics', description: 'Charge your devices using solar energy', stock: 0, image: '/images/power-bank.jpg', status: 'out_of_stock' },
-    ];
-    setProducts(mockProducts);
+    // const mockProducts = [
+    //   { id: 1, name: 'Eco-friendly Water Bottle', points: 150, category: 'kitchen', description: 'Sustainable water bottle made from recycled materials', stock: 15, image: '/images/water-bottle.jpg', status: 'active' },
+    //   { id: 2, name: 'Reusable Grocery Bag', points: 100, category: 'shopping', description: 'Durable shopping bag that reduces plastic waste', stock: 25, image: '/images/grocery-bag.jpg', status: 'active' },
+    //   { id: 3, name: 'Bamboo Toothbrush', points: 80, category: 'bathroom', description: 'Biodegradable toothbrush with soft bristles', stock: 30, image: '/images/toothbrush.jpg', status: 'active' },
+    //   { id: 4, name: 'Solar Power Bank', points: 300, category: 'electronics', description: 'Charge your devices using solar energy', stock: 0, image: '/images/power-bank.jpg', status: 'out_of_stock' },
+    // ];
+    // setProducts(mockProducts);
+
+    const fetchRecycledItems = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/orders/recycled-orders");
+  
+        const recycledItems = response.data;
+
+        setProducts(
+          recycledItems.map(item => ({
+            id: item._id,
+            name: item.itemName,
+            points: item.cost,
+            image: item.imageUrl,
+            description: item.description
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching recycled items:", error);
+      }
+    };
 
     // Mock orders data
     const mockOrders = [
@@ -37,6 +58,7 @@ const CompanyStorePage = () => {
       { id: 103, userName: 'Morgan Lee', date: '2025-03-20', status: 'processing', totalPoints: 300 },
     ];
     setOrders(mockOrders);
+    fetchRecycledItems();
   }, []);
 
   // Get unique categories
@@ -344,11 +366,11 @@ const CompanyStorePage = () => {
           
           {/* Products Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map(product => (
+            {products.map(product => (
               <div key={product.id} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="h-48 bg-gray-200 relative">
                   {product.image ? (
-                    <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                    <img src={`http://localhost:5000/${product?.image?.replace(/\\/g, '/')}`} alt={product.name} className="h-full w-full object-cover" />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-gray-500">No image</div>
                   )}

@@ -1,6 +1,30 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const ProfileOverview = () => {
+  const [user, setUser] = useState(null);
+  const [disposalCount, setDisposalCount] = useState(0);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    setUser(userData);
+
+    const fetchDisposals = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/e-waste/count", {
+          withCredentials: true, // Include cookies for auth
+        });
+        setDisposalCount(res.data.count);
+      } catch (err) {
+        console.error("Error fetching disposal count:", err);
+      }
+    };
+
+    if (userData) {
+      fetchDisposals();
+    }
+  }, []);
+
   return (
     <section id="profile-overview" className="bg-white dark:bg-neutral-900 py-24 mt-16">
       <div className="container mx-auto px-4">
@@ -21,7 +45,7 @@ const ProfileOverview = () => {
                   </svg>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mt-4">Sarah Johnson</h2>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mt-4">{user?.firstName} {user?.lastName}</h2>
               <p className="text-green-600 dark:text-green-400 font-medium">Eco Warrior - Level 3</p>
 
               {/* Progress bar */}
@@ -38,9 +62,12 @@ const ProfileOverview = () => {
               {/* Stats */}
               <div className="mt-8 flex flex-col w-full space-y-2">
                 {[
-                  { label: "Member Since", value: "Mar 2023" },
-                  { label: "Total Disposals", value: "32" },
-                  { label: "Eco Points", value: "750" },
+                  { label: "Member Since", value: new Date(user?.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                  }) },
+                  { label: "Total Disposals", value: disposalCount },
+                  { label: "Eco Points", value: disposalCount*100 },
                   { label: "Carbon Saved", value: "278 kg" },
                 ].map((item, idx) => (
                   <div key={idx} className={`flex justify-between items-center py-2 ${idx < 3 ? 'border-b border-gray-200 dark:border-neutral-700' : ''}`}>
@@ -67,10 +94,10 @@ const ProfileOverview = () => {
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
-                  { label: "Full Name", value: "Sarah Johnson" },
-                  { label: "Email Address", value: "sarah.johnson@example.com" },
+                  { label: "Full Name", value:user?.firstName + " " + user?.lastName },
+                  { label: "Email Address", value: user?.email },
                   { label: "Phone Number", value: "+1 (555) 123-4567" },
-                  { label: "Location", value: "San Francisco, CA" },
+                  { label: "Location", value: user?.location },
                   { label: "Occupation", value: "Software Engineer" },
                   { label: "Preferred Collection Method", value: "Drop-off Center" },
                 ].map((item, idx) => (

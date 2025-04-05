@@ -25,7 +25,7 @@ const Dashboard = () => {
         const pendingOrders = response.data.filter(order => order.status === "Pending");
         const pending = pendingOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
-        const completedOrders = response.data.filter(order => order.status === "Completed");
+        const completedOrders = response.data.filter(order => order.status === "Recycled");
         const completed = completedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
         const processingOrders = response.data.filter(order => order.status === "Processing");
@@ -59,7 +59,7 @@ const Dashboard = () => {
         const [response1, response2, response3] = await Promise.all([
           axios.get('http://localhost:5000/api/orders/pending-orders'),
           axios.get('http://localhost:5000/api/orders/processing-orders'),
-          axios.get('http://localhost:5000/api/orders/processed-orders'),
+          axios.get('http://localhost:5000/api/orders/recycled-orders'),
         ]);
         
         setStatsData([

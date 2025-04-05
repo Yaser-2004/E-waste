@@ -117,6 +117,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
+import axios from 'axios';
 
 const Store = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -124,18 +125,44 @@ const Store = () => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [storeItems, setStoreItems] = useState([]);
+
+  useEffect(() => {
+    const fetchRecycledItems = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/orders/recycled-orders");
+  
+        const recycledItems = response.data;
+
+        setStoreItems(
+          recycledItems.map(item => ({
+            id: item._id,
+            name: item.itemName,
+            points: item.cost,
+            image: item.imageUrl,
+            description: item.description
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching recycled items:", error);
+      }
+    };
+
+    fetchRecycledItems();
+    filterItems('', 'all');
+  }, []);
   
   // Mock data - replace with your actual data source
-  const storeItems = [
-    { id: 1, name: 'Eco-friendly Water Bottle', points: 150, category: 'kitchen', image: '/images/water-bottle.jpg', stock: 15, description: 'Sustainable water bottle made from recycled materials' },
-    { id: 2, name: 'Reusable Grocery Bag', points: 100, category: 'shopping', image: '/images/grocery-bag.jpg', stock: 25, description: 'Durable shopping bag that reduces plastic waste' },
-    { id: 3, name: 'Bamboo Toothbrush', points: 80, category: 'bathroom', image: '/images/toothbrush.jpg', stock: 30, description: 'Biodegradable toothbrush with soft bristles' },
-    { id: 4, name: 'Recycled Notebook', points: 120, category: 'office', image: '/images/notebook.jpg', stock: 20, description: 'Notebook made from 100% recycled paper' },
-    { id: 5, name: 'Solar Power Bank', points: 300, category: 'electronics', image: '/images/power-bank.jpg', stock: 10, description: 'Charge your devices using solar energy' },
-    { id: 6, name: 'Stainless Steel Straw Set', points: 90, category: 'kitchen', image: '/images/straw-set.jpg', stock: 25, description: 'Reusable straws with cleaning brush included' },
-    { id: 7, name: 'Cotton Produce Bags', points: 110, category: 'shopping', image: '/images/produce-bags.jpg', stock: 18, description: 'Lightweight mesh bags for fruits and vegetables' },
-    { id: 8, name: 'Recycled Desk Organizer', points: 140, category: 'office', image: '/images/desk-organizer.jpg', stock: 12, description: 'Keep your workspace tidy with this eco-friendly organizer' },
-  ];
+  // const storeItems = [
+  //   { id: 1, name: 'Eco-friendly Water Bottle', points: 150, category: 'kitchen', image: '/images/water-bottle.jpg', stock: 15, description: 'Sustainable water bottle made from recycled materials' },
+  //   { id: 2, name: 'Reusable Grocery Bag', points: 100, category: 'shopping', image: '/images/grocery-bag.jpg', stock: 25, description: 'Durable shopping bag that reduces plastic waste' },
+  //   { id: 3, name: 'Bamboo Toothbrush', points: 80, category: 'bathroom', image: '/images/toothbrush.jpg', stock: 30, description: 'Biodegradable toothbrush with soft bristles' },
+  //   { id: 4, name: 'Recycled Notebook', points: 120, category: 'office', image: '/images/notebook.jpg', stock: 20, description: 'Notebook made from 100% recycled paper' },
+  //   { id: 5, name: 'Solar Power Bank', points: 300, category: 'electronics', image: '/images/power-bank.jpg', stock: 10, description: 'Charge your devices using solar energy' },
+  //   { id: 6, name: 'Stainless Steel Straw Set', points: 90, category: 'kitchen', image: '/images/straw-set.jpg', stock: 25, description: 'Reusable straws with cleaning brush included' },
+  //   { id: 7, name: 'Cotton Produce Bags', points: 110, category: 'shopping', image: '/images/produce-bags.jpg', stock: 18, description: 'Lightweight mesh bags for fruits and vegetables' },
+  //   { id: 8, name: 'Recycled Desk Organizer', points: 140, category: 'office', image: '/images/desk-organizer.jpg', stock: 12, description: 'Keep your workspace tidy with this eco-friendly organizer' },
+  // ];
   
   // Mock user data - replace with actual user data
   const userData = {
@@ -223,11 +250,6 @@ const Store = () => {
   
   // Calculate total points in cart
   const totalCartPoints = cart.reduce((total, item) => total + (item.points * item.quantity), 0);
-  
-  // Initialize filtered items with all items on component mount
-  useEffect(() => {
-    filterItems('', 'all');
-  }, []);
   
   return (
     <>
@@ -387,7 +409,7 @@ const Store = () => {
         
         {/* Product grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map(item => {
+          {storeItems.map(item => {
             const itemQuantity = getItemQuantity(item.id);
             
             return (
@@ -395,7 +417,7 @@ const Store = () => {
                 <div className="h-48 bg-gray-200">
                   {/* Replace with actual image component */}
                   <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    [Product Image]
+                    <img src={`http://localhost:5000/${item?.image?.replace(/\\/g, '/')}`} alt={item.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
                 <div className="p-4">

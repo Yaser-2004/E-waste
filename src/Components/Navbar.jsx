@@ -58,7 +58,7 @@ const Navbar = () => {
             <div className="relative h-10 w-10 bg-green-400 rounded-full hover:cursor-pointer" onClick={() => setDisplay(!display)}>
               <p className="font-bold text-xl text-center py-1">{firstName.charAt(0)}</p>
 
-              <div className={`absolute p-3 text-black top-12 w-40 right-0 bg-white rounded-md ${!display ? 'hidden' : null}`}>
+              <div className={`absolute z-10 p-3 text-black top-12 w-40 right-0 bg-white rounded-md ${!display ? 'hidden' : null}`}>
                 <p className="pb-2 mb-2 border-b border-gray-200">{firstName}</p>
                 <a href="/user/profile" className="w-full block pb-2 mb-2 border-b border-gray-200 hover:text-green-400 transition duration-300">My Profile</a>
                 <button className="block bg-green-400 rounded-md p-2 px-4 hover:cursor-pointer" onClick={() => handleLogOut()}>Log Out</button>
