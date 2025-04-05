@@ -551,8 +551,6 @@ const LoginPage = () => {
         console.error("Login failed:", error.response?.data || error.message);
         alert("Login failed, please check your credentials.");
       }
-
-      navigate('/company/home');
     } else {
       console.log('Company form validation failed:', errors);
     }

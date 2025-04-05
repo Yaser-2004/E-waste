@@ -1,131 +1,109 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PageHeader from '../CompanySide/PageHeader';
 import FilterBar from '../CompanySide/FilterBar';
 import DataTable from '../CompanySide/DataTable';
 import StatusBadge from '../CompanySide/StatusBadge';
 import Pagination from '../CompanySide/Pagination';
 import axios from 'axios';
+import StatusEditor from '../CompanySide/StatusEditor';
 
 const CollectionRequests = () => {
-  // State for pagination and filters
   const [activePage, setActivePage] = useState(1);
-  const [filters, setFilters] = useState({
-    status: 'all-statuses',
-    wasteType: 'all-types',
-    location: 'all-locations',
-    dateRange: 'all-time'
-  });
+  const [filters, setFilters] = useState({ status: 'All' });
   const [requests, setRequests] = useState([]);
 
-  useEffect(() => {
-    const fetchRequests = async() => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/orders/pending-orders');
-        setRequests(response.data.map(item => (
-          {
-            id: "#" + item._id.slice(-5),
-            date: new Date(item.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric"
-            }),
-            client: item.userId.firstName,
-            type: item.itemName,
-            location: item.location,
-            status: item.status,
-          }
-        )));
-      } catch (error) {
-        console.error('Error fetching processing list:', error);
-      }
-    }
+  // useCallback ensures the latest version is used
+  const fetchRequests = useCallback(async (status) => {
+    try {
+      const query = status && status !== "All" ? `?status=${status}` : '';
+      const response = await axios.get(`http://localhost:5000/api/orders/product-info${query}`);
 
-    fetchRequests();
+      const mappedData = response.data.map(item => ({
+        id: item._id,
+        itemId: "#" + item._id.slice(-5),
+        date: new Date(item.date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        }),
+        itemName: item.itemName,
+        location: item.location,
+        status: item.status
+      }));
+
+      setRequests(mappedData);
+    } catch (error) {
+      console.error('Error fetching product info:', error);
+    }
   }, []);
 
-  // Filter options
+  useEffect(() => {
+    fetchRequests(filters.status);
+  }, [filters.status, fetchRequests]);
+
   const filterOptions = [
     {
       key: 'status',
       label: 'Status',
-      options: ['All Statuses', 'New', 'Scheduled', 'Completed', 'Canceled']
-    },
-    {
-      key: 'wasteType',
-      label: 'Waste Type',
-      options: ['All Types', 'Electronics', 'Batteries', 'Appliances', 'Computers', 'Smartphones', 'Monitors', 'Mixed E-Waste']
-    },
-    {
-      key: 'location',
-      label: 'Location',
-      options: ['All Locations', 'Downtown', 'Eastside', 'Westside', 'North End', 'South End', 'West Hills']
-    },
-    {
-      key: 'dateRange',
-      label: 'Date Range',
-      options: ['All Time', 'Today', 'This Week', 'This Month', 'Custom Range']
+      options: ['All', 'Pending', 'Processing', 'Processed', 'Recycled', 'Repaired']
     }
   ];
 
-  // Table columns configuration
   const columns = [
-    { key: 'id', header: 'ID' },
-    { key: 'date', header: 'Date' },
-    { key: 'client', header: 'Client' },
-    { key: 'type', header: 'Type' },
+    { key: 'itemId', header: 'Item ID' },
+    { key: 'itemName', header: 'Item Name' },
     { key: 'location', header: 'Location' },
+    { key: 'date', header: 'Date' },
     {
       key: 'status',
       header: 'Status',
-      render: (row) => <StatusBadge status={row.status} />
+      render: (row) => (
+        <div className="flex items-center gap-2">
+          <StatusBadge status={row.status} />
+          <StatusEditor 
+            currentStatus={row.status}
+            itemId={row.id}
+            onStatusChange={() => fetchRequests(filters.status)}
+          />
+        </div>
+      )
     }
   ];
 
-  // Event handlers
-  const handleFilterChange = (filterKey, value) => {
-    setFilters({
-      ...filters,
-      [filterKey]: value
-    });
-    // Here you would typically fetch filtered data
-    console.log(`Filter ${filterKey} changed to: ${value}`);
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
   };
 
   const handlePageChange = (page) => {
     setActivePage(page);
-    // Here you would typically fetch data for the new page
-    console.log(`Page changed to: ${page}`);
   };
 
   return (
     <main className="flex-1 p-5">
-      {/* Page header */}
       <PageHeader 
-        title="Collection Requests" 
-        description="Manage your e-waste pickup requests" 
+        title="Product Info" 
+        description="View filtered product information" 
       />
-      
-      {/* Filters */}
+
       <FilterBar 
-        filters={filterOptions} 
-        onChange={handleFilterChange} 
+        filters={filterOptions}
+        onChange={handleFilterChange}
       />
-      
-      {/* Collection requests table */}
+
       <div className="bg-white rounded-lg p-5 shadow-sm">
         <div className="mb-4">
-          <h2 className="text-xl font-semibold">Collection Requests</h2>
+          <h2 className="text-xl font-semibold">Products</h2>
         </div>
-        
+
         {requests.length === 0 ? (
-          <p>No collection requests available.</p>
+          <p>No products available.</p>
         ) : (
           <DataTable 
             columns={columns}
             data={requests}
           />
         )}
-        
+
         <Pagination 
           currentPage={activePage}
           totalPages={4}
