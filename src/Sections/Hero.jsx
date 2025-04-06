@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Client } from '@gradio/client';
 
 const HeroSection = () => {
 
@@ -29,7 +30,7 @@ const HeroSection = () => {
 
     try {
       setUploading(true);
-      const res = await axios.post("http://localhost:5000/api/e-waste/upload", formData, {
+      const res = await axios.post("https://e-waste-backend-1.onrender.com/api/e-waste/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -45,6 +46,27 @@ const HeroSection = () => {
       setUploading(false);
     }
   };
+
+  const [preview, setPreview] = useState(false);
+  const [outPutImage, setOutPutImage] = useState(null);
+
+  const handleCkeckWaste = async (e) => {
+     const file = e.target.files[0];
+      if (!file) return;
+
+      const client = await Client.connect("nikhil77595/ewaste2");
+      const result = await client.predict("/predict", {
+        image: file,
+      });
+
+      setOutPutImage(result.data[0].url);
+      setPreview(true);
+      console.log(result.data);
+  }
+
+  const handleRevert = () => {
+    setPreview(false);
+  }
 
     return (
       <section id="hero" className="bg-neutral-800 text-white py-16 md:py-24">
@@ -78,9 +100,27 @@ const HeroSection = () => {
 
   
                 {/* Learn More Button */}
-                <button className="border-2 border-white hover:border-green-500 hover:text-green-500 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-                  Learn More
-                </button>
+                <label htmlFor="checkImage" className="cursor-pointer bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Chcek E-waste
+                  <input
+                    id="checkImage"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleCkeckWaste} // Replace with your logic
+                  />
+                </label>
+
+
+                {preview && <div className={`absolute top-0 left-1/4 text-center transform translate-x-1/2 translate-y-1/2 w-96 p-4 bg-white rounded-md shadow-lg`}>
+                  <img src={outPutImage} alt="" />
+                  <p className="text-black text-xl mt-3">Your E-waste will is labelled as E-waste</p>
+
+                  <button className="text-white rounded-md bg-green-400 p-2 mt-3 hover:cursor-pointer" onClick={() => handleRevert()}>Close</button>
+                </div>}
               </div>
 
                 {image && (

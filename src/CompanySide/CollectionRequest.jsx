@@ -16,7 +16,7 @@ const CollectionRequests = () => {
   const fetchRequests = useCallback(async (status) => {
     try {
       const query = status && status !== "All" ? `?status=${status}` : '';
-      const response = await axios.get(`http://localhost:5000/api/orders/product-info${query}`);
+      const response = await axios.get(`https://e-waste-backend-1.onrender.com/api/orders/product-info${query}`);
 
       const mappedData = response.data.map(item => ({
         id: item._id,

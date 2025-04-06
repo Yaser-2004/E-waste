@@ -15,7 +15,7 @@ const StatusEditor = ({ currentStatus, itemId, onStatusChange }) => {
     try {
       console.log("Updating status for:", itemId, "→", newStatus);
 
-      await axios.patch(`http://localhost:5000/api/orders/picked-status/${itemId}`, {
+      await axios.patch(`https://e-waste-backend-1.onrender.com/api/orders/picked-status/${itemId}`, {
         status: newStatus
       });
 

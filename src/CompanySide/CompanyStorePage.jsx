@@ -33,7 +33,7 @@ const CompanyStorePage = () => {
 
     const fetchRecycledItems = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/orders/recycled-orders");
+        const response = await axios.get("https://e-waste-backend-1.onrender.com/api/orders/recycled-orders");
   
         const recycledItems = response.data;
 

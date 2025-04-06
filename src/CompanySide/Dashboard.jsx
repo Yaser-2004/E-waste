@@ -20,7 +20,7 @@ const Dashboard = () => {
 
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/orders/all');
+        const response = await axios.get('https://e-waste-backend-1.onrender.com/api/orders/all');
     
         const pendingOrders = response.data.filter(order => order.status === "Pending");
         const pending = pendingOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -57,9 +57,9 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const [response1, response2, response3] = await Promise.all([
-          axios.get('http://localhost:5000/api/orders/pending-orders'),
-          axios.get('http://localhost:5000/api/orders/processing-orders'),
-          axios.get('http://localhost:5000/api/orders/recycled-orders'),
+          axios.get('https://e-waste-backend-1.onrender.com/api/orders/pending-orders'),
+          axios.get('https://e-waste-backend-1.onrender.com/api/orders/processing-orders'),
+          axios.get('https://e-waste-backend-1.onrender.com/api/orders/recycled-orders'),
         ]);
         
         setStatsData([
@@ -75,7 +75,7 @@ const Dashboard = () => {
 
     const fetchProcessingList = async() => {
       try {
-        const response = await axios.get('http://localhost:5000/api/orders/all');
+        const response = await axios.get('https://e-waste-backend-1.onrender.com/api/orders/all');
         setProcessingListData(response.data.map(item => (
           {
             id: item._id,
@@ -126,7 +126,7 @@ const Dashboard = () => {
 
   const fetchOrderDetails = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/orders/order/${id}`);
+      const response = await axios.get(`https://e-waste-backend-1.onrender.com/api/orders/order/${id}`);
       setCurrentData(response.data);
       // console.log("Order Details:", response.data);
     } catch (err) {

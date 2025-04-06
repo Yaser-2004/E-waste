@@ -504,7 +504,7 @@ const LoginPage = () => {
     if (validateUserForm()) {
       console.log('User form validated successfully');
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/user/login', userFormData, {
+        const response = await axios.post('https://e-waste-backend-1.onrender.com/api/auth/user/login', userFormData, {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -534,7 +534,7 @@ const LoginPage = () => {
       console.log('Company form validated successfully');
 
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/company/login', companyFormData, {
+        const response = await axios.post('https://e-waste-backend-1.onrender.com/api/auth/company/login', companyFormData, {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -563,7 +563,7 @@ const LoginPage = () => {
     if (validateUserRegister()) {
       console.log('User registration validated successfully');
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/user/register', userRegisterData, {
+        const response = await axios.post('https://e-waste-backend-1.onrender.com/api/auth/user/register', userRegisterData, {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -599,7 +599,7 @@ const LoginPage = () => {
     if (validateCompanyRegister()) {
       console.log('Company registration validated successfully');
       // In a real application, you would send this data to your backend
-      const response = await axios.post('http://localhost:5000/api/auth/company/register', companyRegisterData, {
+      const response = await axios.post('https://e-waste-backend-1.onrender.com/api/auth/company/register', companyRegisterData, {
         headers: {
           'Content-Type': 'application/json'
         },

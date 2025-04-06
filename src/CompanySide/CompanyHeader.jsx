@@ -19,7 +19,7 @@ const CompanyHeader = ({ children }) => {
 
   const handleLogOut = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/company/logout", {}, {
+      await axios.post("https://e-waste-backend-1.onrender.com/api/auth/company/logout", {}, {
         withCredentials: true, 
       });
   

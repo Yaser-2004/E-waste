@@ -11,7 +11,7 @@ const ProfileOverview = () => {
 
     const fetchDisposals = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/e-waste/count", {
+        const res = await axios.get("https://e-waste-backend-1.onrender.com/api/e-waste/count", {
           withCredentials: true, // Include cookies for auth
         });
         setDisposalCount(res.data.count);
