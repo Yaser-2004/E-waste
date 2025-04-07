@@ -7,7 +7,7 @@ import Footer from "../Components/Footer.jsx";
 import Navbar from "../Components/Navbar.jsx";
 
 
-function Profile() {
+const Profile = () => {
     return (
         <div className="bg-gray-100 dark:bg-neutral-900">
         <Navbar/>
@@ -18,5 +18,5 @@ function Profile() {
         <Footer />
         </div>
     );
-    }
+}
 export default Profile;
